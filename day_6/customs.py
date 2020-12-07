@@ -4,7 +4,7 @@ import generic
 class Solver(generic.AdventDay):
     def __init__(self, filename='input.txt'):
         """
-
+        Init the class
         """
         super().__init__(filename=filename)
 
