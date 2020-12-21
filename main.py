@@ -1,6 +1,6 @@
-import day_17
+import day_18
 
-day = day_17.Solver("day_17/test_input.txt")
+day = day_18.Solver("day_18/test_input.txt")
 day.run()
-day = day_17.Solver("day_17/input.txt")
+day = day_18.Solver("day_18/input.txt")
 day.run()
