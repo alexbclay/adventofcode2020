@@ -19,3 +19,10 @@ repos:
       entry: pylint --ignored-modules=odoo --errors-only --disable=access-member-before-definition
       language: system
       types: [python]
+-   repo: https://github.com/doublify/pre-commit-rust
+    rev: master
+    hooks:
+    -   id: fmt
+        args: ["--manifest-path", "rust/Cargo.toml", "--"]
+    -   id: cargo-check
+        args: ["--manifest-path", "rust/Cargo.toml", "--"]
