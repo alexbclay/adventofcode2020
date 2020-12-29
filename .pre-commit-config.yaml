@@ -23,6 +23,6 @@ repos:
     rev: master
     hooks:
     -   id: fmt
-        args: ["--manifest-path", "rust/Cargo.toml", "--"]
+        args: ["--manifest-path", "rust-advent/Cargo.toml", "--"]
     -   id: cargo-check
-        args: ["--manifest-path", "rust/Cargo.toml", "--"]
+        args: ["--manifest-path", "rust-advent/Cargo.toml", "--"]
