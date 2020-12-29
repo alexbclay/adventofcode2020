@@ -2,6 +2,7 @@ from collections import defaultdict
 import generic
 from pprint import pprint as pp
 
+
 class Solver(generic.AdventDay):
     def __init__(self, filename='input.txt'):
         super().__init__(filename)
@@ -91,8 +92,7 @@ class Solver(generic.AdventDay):
                 print(f'FOUND! {rnd}')
                 break
             cur_str = next_str
-        print(len([c for c in next_str if c == '#'] ))
-
+        print(len([c for c in next_str if c == '#']))
 
     @staticmethod
     def print_grid(chart, size_x=10, size_y=10):
@@ -119,4 +119,4 @@ class Solver(generic.AdventDay):
                 print(f'FOUND! {rnd}')
                 break
             cur_str = next_str
-        print(len([c for c in next_str if c == '#'] ))
+        print(len([c for c in next_str if c == '#']))

@@ -2,6 +2,7 @@ import re
 
 LINE_RE = re.compile('(\d+)-(\d+) ([a-z]): ([a-z]*)')
 
+
 def parse_line(string):
     """
     Parse out the password requirement and the password
@@ -12,8 +13,9 @@ def parse_line(string):
         'first': int(match.group(1)),
         'second': int(match.group(2)),
         'letter': match.group(3),
-        'password': match.group(4)
+        'password': match.group(4),
     }
+
 
 lines = []
 with open('input.txt', 'r') as inp:
@@ -38,6 +40,7 @@ for info in lines:
     if (in_first and not in_second) or (in_second and not in_first):
         count += 1
         from pprint import pprint as pp
+
         pp(info)
 
 print('--- PART 2 ---')

@@ -2,6 +2,7 @@ import re
 
 import generic
 
+
 class Solver(generic.AdventDay):
     PATTERN = re.compile('(\S*):(\S*)')
 
@@ -24,21 +25,11 @@ class Solver(generic.AdventDay):
         # Don't forget the last one!
         self._data.append(cur_chunk)
 
-
     def solve_part_1(self):
         """
         Check for correct passports
         """
-        valid_keys = set([
-            'byr',
-            'iyr',
-            'eyr',
-            'hgt',
-            'hcl',
-            'ecl',
-            'pid',
-            'cid'
-        ])
+        valid_keys = set(['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid', 'cid'])
         valid = 0
         for info in self._data:
             missing = valid_keys - set(info.keys())
@@ -52,6 +43,7 @@ class Solver(generic.AdventDay):
         """
         Validate password fields!
         """
+
         def validate_height(height):
             pattern = re.compile('(\d*)(cm|in)')
             match = pattern.fullmatch(height)
@@ -60,6 +52,7 @@ class Solver(generic.AdventDay):
             if match.group(2) == 'cm':
                 return 150 <= int(match.group(1)) <= 193
             return 59 <= int(match.group(1)) <= 76
+
         key_validation = {
             'byr': lambda year: 1920 <= int(year) <= 2002,
             'iyr': lambda year: 2010 <= int(year) <= 2020,
@@ -67,7 +60,7 @@ class Solver(generic.AdventDay):
             'hgt': validate_height,
             'hcl': lambda color: re.fullmatch(r'#[0-9a-f]{6}', color),
             'ecl': lambda color: color in ('amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'),
-            'pid': lambda pid: re.fullmatch(r'[0-9]{9}', pid)
+            'pid': lambda pid: re.fullmatch(r'[0-9]{9}', pid),
         }
 
         valid_passports = 0

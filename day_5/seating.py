@@ -1,6 +1,7 @@
 import re
 import generic
 
+
 class Solver(generic.AdventDay):
     """
     FBFBBFF = 44
@@ -12,6 +13,7 @@ class Solver(generic.AdventDay):
     FBFBBFFRLR = 357
     0101100101 = 357
     """
+
     def preprocess_input(self):
         """
         Turn the seating assignment into an int
@@ -24,7 +26,7 @@ class Solver(generic.AdventDay):
         }
         self.seat_ints = []
         for line in self._raw_data:
-            binary_string = re.sub('.', lambda c: to_binary[c[0]] , line)
+            binary_string = re.sub('.', lambda c: to_binary[c[0]], line)
             self.seat_ints.append(int(binary_string, 2))
 
     def solve_part_1(self):

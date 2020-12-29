@@ -34,9 +34,9 @@ class Solver(generic.AdventDay):
 
             if self._current_input == "rules":
                 match = self.RULE_REGEX.match(line)
-                cur_rule_set = set(
-                    range(int(match.group(2)), int(match.group(3)) + 1)
-                ) | set(range(int(match.group(4)), int(match.group(5)) + 1))
+                cur_rule_set = set(range(int(match.group(2)), int(match.group(3)) + 1)) | set(
+                    range(int(match.group(4)), int(match.group(5)) + 1)
+                )
 
                 self._rules[match.group(1)] = cur_rule_set
                 self._total_valid_set |= cur_rule_set

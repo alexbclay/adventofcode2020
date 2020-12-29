@@ -75,9 +75,7 @@ class Solver(generic.AdventDay):
             "S": lambda coord, dist: Coordinate(coord.x, coord.y - dist),
             "E": lambda coord, dist: Coordinate(coord.x + dist, coord.y),
             "W": lambda coord, dist: Coordinate(coord.x - dist, coord.y),
-            "F": lambda coord, dist: Coordinate(
-                coord.x + waypoint.x * dist, coord.y + waypoint.y * dist
-            ),
+            "F": lambda coord, dist: Coordinate(coord.x + waypoint.x * dist, coord.y + waypoint.y * dist),
         }
         rotations = {
             "R": lambda coord: Coordinate(coord.y, coord.x * -1),

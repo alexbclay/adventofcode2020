@@ -1,2 +1,5 @@
 pandas==1.1.4
 ipdb==0.13.4
+pre-commit
+pylint
+black

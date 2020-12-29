@@ -1,0 +1,7 @@
+[tool.black]
+line-length = 110
+exclude = '''
+( \.git
+  | \.venv* )
+'''
+skip-string-normalization = true

@@ -42,17 +42,10 @@ class Coord4d:
         return f"c4d({self.x}, {self.y}, {self.z}, {self.w})"
 
     def __add__(self, other):
-        return Coord4d(
-            self.x + other.x, self.y + other.y, self.z + other.z, self.w + other.w
-        )
+        return Coord4d(self.x + other.x, self.y + other.y, self.z + other.z, self.w + other.w)
 
     def __eq__(self, other):
-        return (
-            self.x == other.x
-            and self.y == other.y
-            and self.z == other.z
-            and self.w == other.w
-        )
+        return self.x == other.x and self.y == other.y and self.z == other.z and self.w == other.w
 
     def __hash__(self):
         return (self.x, self.y, self.z, self.w).__hash__()

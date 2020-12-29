@@ -1,7 +1,7 @@
 from pprint import pprint as pp
 
-class AdventDay:
 
+class AdventDay:
     def __init__(self, filename='input.txt'):
         """
         Create the day's solver

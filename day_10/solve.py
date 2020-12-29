@@ -27,13 +27,13 @@ class Solver(generic.AdventDay):
         graph = {}
         cur_series = set()
         for idx, num in enumerate(self.sorted_lines[:-1]):
-            diff = self.sorted_lines[idx+1] - num
+            diff = self.sorted_lines[idx + 1] - num
             cur_series.add(num)
             if diff == 3:
                 series.append(cur_series)
                 cur_series = set()
             graph[num] = []
-            for diff in range(1,4):
+            for diff in range(1, 4):
                 if (num - diff) in graph:
                     graph[num - diff].append(num)
         cur_series.add(self.sorted_lines[-1])
@@ -65,7 +65,7 @@ class Solver(generic.AdventDay):
         ones = 0
         threes = 0
         for idx, num in enumerate(self.sorted_lines[:-1]):
-            diff = self.sorted_lines[idx+1] - num
+            diff = self.sorted_lines[idx + 1] - num
             if diff == 1:
                 ones += 1
             elif diff == 3:

@@ -1,6 +1,7 @@
 from collections import defaultdict
 import generic
 
+
 class Solver(generic.AdventDay):
     def __init__(self, filename='input.txt'):
         """
@@ -9,7 +10,6 @@ class Solver(generic.AdventDay):
         super().__init__(filename=filename)
 
         self._groups = []
-
 
     def preprocess_input(self):
         """

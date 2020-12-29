@@ -1,8 +1,8 @@
 import generic
 import pandas as pd
 
-class Solver(generic.AdventDay):
 
+class Solver(generic.AdventDay):
     @classmethod
     def process_line(cls, line):
         """
@@ -44,16 +44,10 @@ class Solver(generic.AdventDay):
         Check a bunch of slopes
         """
         print('--- PART 2 ---')
-        slopes = [
-            (1, 1),
-            (3, 1),
-            (5, 1),
-            (7, 1),
-            (1, 2)
-        ]
+        slopes = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
 
-        trees = [self.get_trees(x,y) for x,y in slopes]
+        trees = [self.get_trees(x, y) for x, y in slopes]
         total = 1
-        for x,y in slopes:
-            total *= self.get_trees(x,y)
+        for x, y in slopes:
+            total *= self.get_trees(x, y)
         print(trees, total)

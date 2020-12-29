@@ -25,7 +25,7 @@ class Solver(generic.AdventDay):
                 continue
             # we enumerate starting from [1], so the first index is 0
             # which gets the previous group to the one that's being enumerated
-            prev_group = self._raw_data[idx - self.lookback_size:idx]
+            prev_group = self._raw_data[idx - self.lookback_size : idx]
             possible_set = set()
             for x, num_1 in enumerate(prev_group):
                 for num_2 in prev_group[x:]:
@@ -54,7 +54,7 @@ class Solver(generic.AdventDay):
             while cur_sum < invalid_number and idx + offset < len(self._raw_data):
                 cur_sum += self._raw_data[idx + offset]
                 if cur_sum == invalid_number:
-                    found = self._raw_data[idx:idx+offset]
+                    found = self._raw_data[idx : idx + offset]
                     break
                 offset += 1
         if not found:

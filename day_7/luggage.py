@@ -56,7 +56,7 @@ class Solver(generic.AdventDay):
         nested = 0
         for child_color, weight in self._graph[color].items():
             nested += weight
-            nested += self._nested_bags(child_color, depth=depth+1) * weight
+            nested += self._nested_bags(child_color, depth=depth + 1) * weight
         return nested
 
     def solve_part_2(self):

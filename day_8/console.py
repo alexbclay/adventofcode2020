@@ -5,6 +5,7 @@ import generic
 
 class Solver(generic.AdventDay):
     LINE_REGEX = re.compile('(jmp|acc|nop) ([-+]\d*)')
+
     @classmethod
     def process_line(self, line):
         """
@@ -13,8 +14,7 @@ class Solver(generic.AdventDay):
         line = super().process_line(line)
         match = self.LINE_REGEX.match(line)
 
-        return {'instruction': match.group(1),
-                'argument': int(match.group(2))}
+        return {'instruction': match.group(1), 'argument': int(match.group(2))}
 
     def preprocess_input(self):
         pass
