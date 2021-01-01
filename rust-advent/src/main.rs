@@ -1,4 +1,5 @@
 use advent2020;
+use std::process;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -11,24 +12,31 @@ struct Opt {
 
 fn main() {
     let args = Opt::from_args();
-    println!("Args: {:?}", args);
 
     // load the file
-    // TODO: handle this error
     let content = match std::fs::read_to_string(&args.input) {
         Ok(content) => content,
-        Err(error) => error.to_string(),
+        Err(error) => {
+            eprintln!("Unable to read input file: {}", &args.input.display());
+            eprintln!("Error was: {}", error);
+            process::exit(1);
+        }
     };
-    // println!("{}", content);
-    // TODO: handle error
+    // TODO: handle errors better
     let day = match &args.day[..] {
         "1" => advent2020::day_one::Solver::new(content),
-        _ => panic!("Not implemented yet"),
+        _ => {
+            eprintln!("Day {} is not implemented yet", &args.day);
+            process::exit(2);
+        }
     };
 
     let day = match day {
         Ok(val) => val,
-        Err(err) => panic!("Could not set up day: {:?}", err),
+        Err(err) => {
+            eprintln!("Could not set up day {}: {:?}", &args.day, err);
+            process::exit(4);
+        }
     };
 
     match day.part_one() {
