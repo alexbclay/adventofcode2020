@@ -19,13 +19,28 @@ fn main() {
         Ok(content) => content,
         Err(error) => error.to_string(),
     };
-
+    // println!("{}", content);
     // TODO: handle error
     let day = match &args.day[..] {
         "1" => advent2020::day_one::Solver::new(content),
         _ => panic!("Not implemented yet"),
     };
 
-    println!("Solution Part 1: {}", day.part_one());
-    println!("Solution Part 2: {}", day.part_two());
+    let day = match day {
+        Ok(val) => val,
+        Err(err) => panic!("Could not set up day: {:?}", err),
+    };
+
+    match day.part_one() {
+        Ok(solution) => println!("Solution Part 1: {}", solution),
+        Err(err) => {
+            println!("Error in part one: {}", err)
+        }
+    }
+    match day.part_two() {
+        Ok(solution) => println!("Solution Part 1: {}", solution),
+        Err(err) => {
+            println!("Error in part one: {}", err)
+        }
+    }
 }
