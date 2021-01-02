@@ -1,29 +1,27 @@
+use super::Solver;
+
 pub fn say_hi() {
     println!("Hello from day one!");
 }
 
-pub struct Solver {
+pub struct DayOneSolver {
     all_ints: Vec<u32>,
 }
 
-impl Solver {
-    pub fn new(input: String) -> Result<Solver, String> {
+impl Solver for DayOneSolver {
+    fn from_input(input: &String) -> Result<DayOneSolver, String> {
         let mut all_ints: Vec<u32> = Vec::new();
 
         for line in input.lines() {
-            match line.parse() {
-                Ok(val) => all_ints.push(val),
-                Err(err) => {
-                    println!("COULD NOT PARSE! {:?}", err);
-                    return Err(format!("Could not parse line: {}", line));
-                }
-            };
+            all_ints.push(match line.parse() {
+                Ok(val) => val,
+                Err(error) => return Err(error.to_string()),
+            });
         }
 
-        Ok(Solver { all_ints: all_ints })
+        Ok(DayOneSolver { all_ints: all_ints })
     }
-
-    pub fn part_one(&self) -> Result<u32, &str> {
+    fn part_one(&self) -> Result<u32, &str> {
         for i in 0..self.all_ints.len() {
             let i_val = self.all_ints[i];
             for j in i..self.all_ints.len() {
@@ -33,10 +31,10 @@ impl Solver {
                 }
             }
         }
-        Err("No solution found")
+        Err("No solution found for part one")
     }
 
-    pub fn part_two(&self) -> Result<u32, &str> {
+    fn part_two(&self) -> Result<u32, &str> {
         let len = self.all_ints.len();
         for i in 0..len {
             let i_val = self.all_ints[i];
@@ -50,6 +48,6 @@ impl Solver {
                 }
             }
         }
-        Err("No solution found")
+        Err("No solution found for part two")
     }
 }

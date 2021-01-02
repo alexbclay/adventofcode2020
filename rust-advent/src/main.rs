@@ -1,4 +1,6 @@
 use advent2020;
+use advent2020::Solver;
+use std::error::Error;
 use std::process;
 use structopt::StructOpt;
 
@@ -10,45 +12,22 @@ struct Opt {
     input: std::path::PathBuf,
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let args = Opt::from_args();
 
     // load the file
-    let content = match std::fs::read_to_string(&args.input) {
-        Ok(content) => content,
-        Err(error) => {
-            eprintln!("Unable to read input file: {}", &args.input.display());
-            eprintln!("Error was: {}", error);
+    let content = std::fs::read_to_string(&args.input)?;
+
+    let day = match &args.day[..] {
+        "1" => advent2020::day_one::DayOneSolver::from_input(&content)?,
+        _ => {
+            eprintln!("Day {} is not implemented yet", &args.day);
             process::exit(1);
         }
     };
-    // TODO: handle errors better
-    let day = match &args.day[..] {
-        "1" => advent2020::day_one::Solver::new(content),
-        _ => {
-            eprintln!("Day {} is not implemented yet", &args.day);
-            process::exit(2);
-        }
-    };
 
-    let day = match day {
-        Ok(val) => val,
-        Err(err) => {
-            eprintln!("Could not set up day {}: {:?}", &args.day, err);
-            process::exit(4);
-        }
-    };
+    println!("Part 1: {}", day.part_one()?);
+    println!("Part 2: {}", day.part_two()?);
 
-    match day.part_one() {
-        Ok(solution) => println!("Solution Part 1: {}", solution),
-        Err(err) => {
-            println!("Error in part one: {}", err)
-        }
-    }
-    match day.part_two() {
-        Ok(solution) => println!("Solution Part 1: {}", solution),
-        Err(err) => {
-            println!("Error in part one: {}", err)
-        }
-    }
+    Ok(())
 }
