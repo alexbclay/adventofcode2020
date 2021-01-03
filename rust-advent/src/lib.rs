@@ -1,5 +1,9 @@
+#[macro_use]
+extern crate lazy_static;
+extern crate regex;
+
 pub trait Solver {
-    fn from_input(input: &String) -> Result<Self, String>
+    fn from_input(input: &String) -> Result<Box<Self>, String>
     where
         Self: Sized;
 
@@ -12,3 +16,4 @@ pub trait Solver {
 }
 
 pub mod day_one;
+pub mod day_two;

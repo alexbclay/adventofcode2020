@@ -18,8 +18,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     // load the file
     let content = std::fs::read_to_string(&args.input)?;
 
-    let day = match &args.day[..] {
+    let day: Box<dyn Solver> = match &args.day[..] {
         "1" => advent2020::day_one::DayOneSolver::from_input(&content)?,
+        "2" => advent2020::day_two::DayTwoSolver::from_input(&content)?,
         _ => {
             eprintln!("Day {} is not implemented yet", &args.day);
             process::exit(1);

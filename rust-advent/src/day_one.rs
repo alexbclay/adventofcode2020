@@ -1,15 +1,11 @@
 use super::Solver;
 
-pub fn say_hi() {
-    println!("Hello from day one!");
-}
-
 pub struct DayOneSolver {
     all_ints: Vec<u32>,
 }
 
 impl Solver for DayOneSolver {
-    fn from_input(input: &String) -> Result<DayOneSolver, String> {
+    fn from_input(input: &String) -> Result<Box<DayOneSolver>, String> {
         let mut all_ints: Vec<u32> = Vec::new();
 
         for line in input.lines() {
@@ -19,7 +15,7 @@ impl Solver for DayOneSolver {
             });
         }
 
-        Ok(DayOneSolver { all_ints: all_ints })
+        Ok(Box::new(DayOneSolver { all_ints: all_ints }))
     }
     fn part_one(&self) -> Result<u32, &str> {
         for i in 0..self.all_ints.len() {
