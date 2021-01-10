@@ -1,6 +1,9 @@
 use super::Solver;
 use regex::Regex;
+use std::cmp;
 use std::collections::{HashMap, HashSet};
+use std::convert::TryInto;
+use std::fmt;
 
 #[derive(Debug)]
 struct Rule {
@@ -10,29 +13,186 @@ struct Rule {
 }
 
 impl Rule {
-    fn get_items(&self) -> Vec<Item> {
+    fn get_predict_items(&self, position: usize, input_index: usize) -> Vec<Item> {
         let mut item_vec = vec![];
         for rule in &self.sub_rules {
             item_vec.push(Item {
                 lhs: self.symbol.to_string(),
                 rhs: rule.to_vec(),
-                position: 0,
+                position: position,
+                input_start: input_index,
             });
         }
         item_vec
     }
+
+    fn get_scan_item(&self, input_index: usize) -> Item {
+        Item {
+            lhs: self.symbol.to_string(),
+            rhs: vec![self.terminal.as_ref().unwrap().to_string()],
+            position: 1,
+            input_start: input_index,
+        }
+    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, Clone)]
 struct Item {
-    lhs: String,      // Production rule left side
-    rhs: Vec<String>, // Production rule right side
-    position: usize,  // index of the partial parse
+    lhs: String,        // Production rule left side
+    rhs: Vec<String>,   // Production rule right side
+    position: usize,    // index of the partial parse
+    input_start: usize, // number of characters of the input consumed
+}
+
+impl Item {
+    fn get_next_symbol(&self) -> Option<&String> {
+        self.rhs.get(self.position)
+    }
+
+    fn last_symbol(&self) -> Option<String> {
+        if self.position >= self.rhs.len() {
+            None
+        } else {
+            Some(self.rhs[self.position].to_string())
+        }
+    }
+
+    fn move_position_right(&self) -> Item {
+        Item {
+            lhs: self.lhs.to_string(),
+            rhs: self.rhs.to_vec(),
+            position: self.position + 1,
+            input_start: self.input_start,
+        }
+    }
+
+    fn is_success(&self, start_symbol: &String) -> bool {
+        self.position == self.rhs.len() && self.input_start == 0 && &self.lhs == start_symbol
+    }
+}
+
+impl fmt::Display for Item {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{} -> {:?} (pos: {}) ({})",
+            self.lhs, self.rhs, self.position, self.input_start
+        )
+    }
+}
+
+impl cmp::PartialEq for Item {
+    fn eq(&self, other: &Self) -> bool {
+        if self.lhs != other.lhs {
+            return false;
+        }
+        if self.position != other.position {
+            return false;
+        }
+        if self.input_start != other.input_start {
+            return false;
+        }
+
+        if self.rhs.len() != other.rhs.len() {
+            return false;
+        }
+
+        for (i, symbol) in self.rhs.iter().enumerate() {
+            if &other.rhs[i] != symbol {
+                return false;
+            }
+        }
+        for (i, symbol) in other.rhs.iter().enumerate() {
+            if &self.rhs[i] != symbol {
+                return false;
+            }
+        }
+        true
+    }
 }
 
 #[derive(Debug)]
-struct StateSet {
-    states: Vec<Item>,
+struct StateSets {
+    sets: Vec<Vec<Item>>,
+    start_symbol: String,
+}
+
+impl StateSets {
+    fn new(size: usize, start_symbol: String) -> StateSets {
+        let mut empty_sets = vec![];
+        for _ in 0..size + 1 {
+            empty_sets.push(vec![]);
+        }
+        StateSets {
+            sets: empty_sets,
+            start_symbol: start_symbol.to_string(),
+        }
+    }
+
+    fn initialize(&mut self, start_rule: &Rule) {
+        self.add_all(0, &start_rule.get_predict_items(0, 0));
+    }
+
+    fn add(&mut self, set_index: usize, item: &Item) {
+        // Add single item
+        if set_index >= self.sets.len() {
+            return;
+        }
+        if !self.sets[set_index].iter().any(|i| i == item) {
+            self.sets[set_index].push(item.clone());
+        }
+    }
+    fn add_all(&mut self, set_index: usize, items: &Vec<Item>) {
+        // Add multiple items
+        for item in items.iter() {
+            self.add(set_index, item);
+        }
+    }
+
+    fn len(&mut self, set_index: usize) -> usize {
+        self.sets[set_index].len()
+    }
+
+    fn get_item(&self, set_index: usize, item_index: usize) -> Item {
+        self.sets[set_index][item_index].clone()
+    }
+
+    fn do_completions(&mut self, state_index: usize, item: &Item) {
+        self.add_all(
+            state_index,
+            &self.sets[item.input_start]
+                .iter()
+                .filter_map(|i| match i.last_symbol() {
+                    None => None,
+                    Some(symbol) => {
+                        if symbol == item.lhs.to_string() {
+                            Some(i.move_position_right())
+                        } else {
+                            None
+                        }
+                    }
+                })
+                .collect(),
+        );
+    }
+
+    fn is_success(&self) -> bool {
+        self.sets[self.sets.len() - 1]
+            .iter()
+            .any(|i| i.is_success(&self.start_symbol))
+    }
+}
+
+impl fmt::Display for StateSets {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for (set_index, set) in self.sets.iter().enumerate() {
+            write!(f, "-- S({}) --\n", set_index);
+            for item in set.iter() {
+                write!(f, "{}\n", item);
+            }
+        }
+        write!(f, "")
+    }
 }
 
 #[derive(Debug)]
@@ -70,7 +230,7 @@ impl DayNineteenSolver {
                 )),
             });
         for rule_tuple in rule_lines {
-            println!("{:?}", rule_tuple);
+            // println!("{:?}", rule_tuple);
             let leftside: String = rule_tuple.0.to_string();
             // keep track of leftside symbols so that we can find the start symbol
             lhs.insert(rule_tuple.0.to_string());
@@ -84,7 +244,7 @@ impl DayNineteenSolver {
                     Rule {
                         symbol: leftside.to_string(),
                         sub_rules: vec![],
-                        terminal: Some(rightside.to_string()),
+                        terminal: Some(rightside[1..2].to_string()),
                     },
                 );
             } else {
@@ -130,9 +290,9 @@ impl DayNineteenSolver {
                 self.rules.insert(leftside, all_rules);
             }
         }
-        println!("LHS: {:?}", lhs);
-        println!("RHS: {:?}", rhs);
-        println!("DIFF: {:?}", lhs.difference(&rhs).collect::<Vec<&String>>());
+        // println!("LHS: {:?}", lhs);
+        // println!("RHS: {:?}", rhs);
+        // println!("DIFF: {:?}", lhs.difference(&rhs).collect::<Vec<&String>>());
         self.start_symbol = lhs.difference(&rhs).next().map(|s| s.to_string());
     }
 
@@ -152,46 +312,75 @@ impl DayNineteenSolver {
             .collect();
     }
 
-    fn earley_parse(&self, input: &String) {
+    fn earley_parse(&self, input: &String) -> bool {
         println!("=== PARSING STRING: {} ===", input);
 
-        // initialize state set with empty index 0 state
-        let mut state_sets: Vec<StateSet> = vec![StateSet { states: vec![] }];
-
         let start = self.start_symbol.as_ref();
-        let start_rule = self.rules.get(start.unwrap()).unwrap();
-        for item in start_rule.get_items() {
-            state_sets[0].states.push(item);
-            // state_sets[0].states.push(Item {
-            //     lhs: start.unwrap().to_string(),
-            //     rhs: rule.to_vec(),
-            //     position: 0,
-            // });
-        }
-        println!("{:?}", state_sets);
+        let mut state_sets = StateSets::new(input.len(), start.unwrap().to_string());
 
-        // for state_index in 0..input.len(){
-        for state_index in 0..1 {
-            println!("outer loop #{}", state_index);
+        let start_rule = self.rules.get(start.unwrap()).unwrap();
+
+        state_sets.initialize(start_rule);
+
+        // println!("{}", state_sets);
+
+        for state_index in 0..input.len() + 1 {
+            // for state_index in 0..3 {
+            // println!(">>>>>>>>> outer loop #{} <<<<<<<<<<<", state_index);
             let mut inner_index = 0;
             loop {
-                let cur_item = &state_sets[state_index].states[inner_index];
-                println!("\t examining {:?}", cur_item);
+                if inner_index >= state_sets.len(state_index) {
+                    break;
+                }
 
-                // prediction
-                let next_symbol = cur_item.rhs.get(cur_item.position).unwrap();
-                println!("\t next symbol: {:?}", next_symbol);
+                let cur_item = state_sets.get_item(state_index, inner_index);
+                // println!("EXAM: {}", cur_item);
+                let next_symbol = match cur_item.get_next_symbol() {
+                    None => {
+                        // COMPLETE: this item's rule has completed its scan
+                        // go back through the state sets to find other matches that could also result in this item
+                        // println!("--> COMPLETE!");
+                        state_sets.do_completions(state_index, &cur_item);
+
+                        inner_index += 1;
+                        // println!("cur_state:\n{}", state_sets);
+
+                        continue;
+                    }
+                    Some(symbol) => symbol,
+                };
+                // println!("  next symbol: {:?}", next_symbol);
 
                 let next_rule = self.rules.get(next_symbol).unwrap();
-                for item in next_rule.get_items() {
-                    state_sets[state_index].states.push(item);
+                match &next_rule.terminal {
+                    None => {
+                        // PREDICT: add predictions to the current state set
+                        // println!("--> PREDICT!");
+                        state_sets
+                            .add_all(state_index, &next_rule.get_predict_items(0, state_index))
+                    }
+                    Some(terminal) => {
+                        // SCAN: found a terminal.  If it matches the input, then put it the next state set
+                        if terminal == &input.chars().nth(state_index).unwrap_or(' ').to_string() {
+                            // println!("--> SCAN: Terminal {}", terminal);
+                            state_sets.add(state_index + 1, &next_rule.get_scan_item(state_index));
+                        } else {
+                            // println!("--> SCAN failed {}", terminal);
+                        }
+                    }
                 }
-                println!("\t next rules: {:?}", next_rule);
+                // println!("\t next rules: {:?}", next_rule);
 
-                println!("\t cur_state: {:?}", state_sets);
-                break;
+                // println!("\t cur_state:\n {}", state_sets);
+                inner_index += 1;
+                // if inner_index >= 15 {
+                //     break;
+                // }
             }
         }
+        // println!("\t cur_state:\n {}", state_sets);
+
+        state_sets.is_success()
     }
 }
 
@@ -206,8 +395,15 @@ impl Solver for DayNineteenSolver {
     }
 
     fn part_one(&self) -> Result<u32, &str> {
-        self.earley_parse(&self.inputs[0]);
-        Ok(1)
+        Ok(self
+            .inputs
+            .iter()
+            .filter(|input| self.earley_parse(input))
+            .count()
+            .try_into()
+            .unwrap())
+        // self.earley_parse(&self.inputs[0]);
+        // Ok(1)
     }
     fn part_two(&self) -> Result<u32, &str> {
         Ok(2)
