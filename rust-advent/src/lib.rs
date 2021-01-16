@@ -7,10 +7,10 @@ pub trait Solver {
     where
         Self: Sized;
 
-    fn part_one(&self) -> Result<u32, &str> {
+    fn part_one(&self) -> Result<usize, &str> {
         Err("Not implemented yet!")
     }
-    fn part_two(&self) -> Result<u32, &str> {
+    fn part_two(&self) -> Result<usize, &str> {
         Err("Not implemented yet!")
     }
 }
@@ -20,3 +20,4 @@ pub mod day_three;
 pub mod day_two;
 
 pub mod day_nineteen;
+pub mod day_twenty;

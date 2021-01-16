@@ -62,14 +62,13 @@ impl Solver for DayTwoSolver {
         Ok(Box::new(DayTwoSolver { all_rules: rules }))
     }
 
-    fn part_one(&self) -> Result<u32, &str> {
+    fn part_one(&self) -> Result<usize, &str> {
         let valid_rules = self.all_rules.iter().filter(|&r| r.is_valid_one()).count();
 
-        // convert usize to u32
-        Ok(valid_rules.try_into().unwrap())
+        Ok(valid_rules)
     }
-    fn part_two(&self) -> Result<u32, &str> {
+    fn part_two(&self) -> Result<usize, &str> {
         let valid_rules = self.all_rules.iter().filter(|&r| r.is_valid_two()).count();
-        Ok(valid_rules.try_into().unwrap())
+        Ok(valid_rules)
     }
 }

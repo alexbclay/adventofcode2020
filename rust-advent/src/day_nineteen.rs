@@ -185,13 +185,14 @@ impl StateSets {
 
 impl fmt::Display for StateSets {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut output = String::from("");
         for (set_index, set) in self.sets.iter().enumerate() {
-            write!(f, "-- S({}) --\n", set_index);
+            output += &format!("-- S({}) --\n", set_index);
             for item in set.iter() {
-                write!(f, "{}\n", item);
+                output += &format!("{}\n", item);
             }
         }
-        write!(f, "")
+        write!(f, "{}", output)
     }
 }
 
@@ -394,7 +395,7 @@ impl Solver for DayNineteenSolver {
         Ok(Box::new(solver))
     }
 
-    fn part_one(&self) -> Result<u32, &str> {
+    fn part_one(&self) -> Result<usize, &str> {
         Ok(self
             .inputs
             .iter()
@@ -405,7 +406,7 @@ impl Solver for DayNineteenSolver {
         // self.earley_parse(&self.inputs[0]);
         // Ok(1)
     }
-    fn part_two(&self) -> Result<u32, &str> {
+    fn part_two(&self) -> Result<usize, &str> {
         Ok(2)
     }
 }

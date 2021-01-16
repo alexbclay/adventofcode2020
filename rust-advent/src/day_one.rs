@@ -1,12 +1,12 @@
 use super::Solver;
 
 pub struct DayOneSolver {
-    all_ints: Vec<u32>,
+    all_ints: Vec<usize>,
 }
 
 impl Solver for DayOneSolver {
     fn from_input(input: &String) -> Result<Box<DayOneSolver>, String> {
-        let mut all_ints: Vec<u32> = Vec::new();
+        let mut all_ints: Vec<usize> = Vec::new();
 
         for line in input.lines() {
             all_ints.push(match line.parse() {
@@ -17,7 +17,7 @@ impl Solver for DayOneSolver {
 
         Ok(Box::new(DayOneSolver { all_ints: all_ints }))
     }
-    fn part_one(&self) -> Result<u32, &str> {
+    fn part_one(&self) -> Result<usize, &str> {
         for i in 0..self.all_ints.len() {
             let i_val = self.all_ints[i];
             for j in i..self.all_ints.len() {
@@ -30,7 +30,7 @@ impl Solver for DayOneSolver {
         Err("No solution found for part one")
     }
 
-    fn part_two(&self) -> Result<u32, &str> {
+    fn part_two(&self) -> Result<usize, &str> {
         let len = self.all_ints.len();
         for i in 0..len {
             let i_val = self.all_ints[i];
