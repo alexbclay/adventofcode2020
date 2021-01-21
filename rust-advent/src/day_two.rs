@@ -1,6 +1,5 @@
 use super::Solver;
 use regex::Regex;
-use std::convert::TryInto;
 use std::num::ParseIntError;
 
 #[derive(Debug)]
