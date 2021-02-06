@@ -24,6 +24,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         "3" => advent2020::day_three::DayThreeSolver::from_input(&content)?,
         "19" => advent2020::day_nineteen::DayNineteenSolver::from_input(&content)?,
         "20" => advent2020::day_twenty::DayTwentySolver::from_input(&content)?,
+        "21" => advent2020::day_twentyone::DayTwentyOneSolver::from_input(&content)?,
         _ => {
             eprintln!("Day {} is not implemented yet", &args.day);
             process::exit(1);
