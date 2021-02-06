@@ -22,3 +22,4 @@ pub mod day_two;
 pub mod day_nineteen;
 pub mod day_twenty;
 pub mod day_twentyone;
+pub mod day_twentytwo;

@@ -181,11 +181,11 @@ impl Solver for DayTwentyOneSolver {
                 }
             }
         }
-        final_list.sort_by(|(ingr_a, allg_a), (ingr_b, allg_b)| allg_a.cmp(allg_b));
+        final_list.sort_by(|(_, allg_a), (_, allg_b)| allg_a.cmp(allg_b));
 
         let solution_string = final_list
             .iter()
-            .map(|(ingredient, allergy)| ingredient.to_string())
+            .map(|(ingredient, _)| ingredient.to_string())
             .collect::<Vec<_>>()
             .join(",");
         println!("{:?}", solution_string);
