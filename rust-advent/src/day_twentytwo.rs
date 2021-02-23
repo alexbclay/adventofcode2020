@@ -60,7 +60,6 @@ impl DayTwentyTwoSolver {
     }
 
     fn state_to_string(&self) -> String {
-        let mut state_str = String::from("");
         let p1_state = self
             .p1_cards
             .iter()
